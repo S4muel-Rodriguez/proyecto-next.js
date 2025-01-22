@@ -1,78 +1,48 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from '../styles/Home.module.css';
 import { useRouter } from 'next/router';
 
-const products = [
-  {
-    id: 1,
-    name: 'Nike Air Max 2021',
-    price: 120,
-    image: '/img/2da zapa de nike.jpg',
-  },
-  {
-    id: 2,
-    name: 'Nike ZoomX Vaporfly Next%',
-    price: 250,
-    image: '/img/zapatilla nike.jpeg',
-  },
-  {
-    id: 3,
-    name: 'Nike React Infinity Run',
-    price: 160,
-    image: '/img/gorra nike.jpeg',
-  },
-  {
-    id: 4,
-    name: 'Nike Media',
-    price: 90,
-    image: '/img/media nike.webp',
-  },
-  {
-    id: 5,
-    name: 'Musculosa para Mujer Nike',
-    price: 55,
-    image: '/img/musculosa para mujer.webp',
-  },
-  {
-    id: 6,
-    name: 'Pantalón de Moda Mujer Nike',
-    price: 80,
-    image: '/img/pantalon de modda mujer.webp',
-  },
-  {
-    id: 7,
-    name: 'Remera Manga Larga Nike',
-    price: 70,
-    image: '/img/remera manga larga.webp',
-  },
-  {
-    id: 8,
-    name: 'Más Gorras Nike',
-    price: 50,
-    image: '/img/mas gorras nike.png',
-  },
-];
-
 export default function Home() {
+  const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
   const router = useRouter();
 
+  // Obtener productos de la API
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const response = await fetch('/api/products');
+      const data = await response.json();
+      setProducts(data);
+    };
+
+    fetchProducts();
+  }, []);
+
   // Función para añadir al carrito
-  const addToCart = (product) => {
+  const addToCart = async (product) => {
     const existingProduct = cart.find(item => item.id === product.id);
+    let updatedCart;
 
     if (existingProduct) {
-      const updatedCart = cart.map(item => 
+      updatedCart = cart.map(item => 
         item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
       );
-      setCart(updatedCart);
-      localStorage.setItem('cart', JSON.stringify(updatedCart));
     } else {
-      const newProduct = { ...product, quantity: 1 };
-      const updatedCart = [...cart, newProduct];
-      setCart(updatedCart);
-      localStorage.setItem('cart', JSON.stringify(updatedCart));
+      updatedCart = [...cart, { ...product, quantity: 1 }];
     }
+
+    setCart(updatedCart);
+    localStorage.setItem('cart', JSON.stringify(updatedCart));
+    
+    // Enviar al servidor el carrito actualizado
+    await fetch('/api/cart', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'cart': JSON.stringify(updatedCart),
+      },
+      body: JSON.stringify({ product }),
+    });
   };
 
   // Redirigir al checkout

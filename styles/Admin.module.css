@@ -1,0 +1,77 @@
+/* styles/Admin.module.scss */
+.container {
+    padding: 20px;
+    background-color: #f9f9f9;
+  }
+  
+  .title {
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .productForm {
+    margin-bottom: 30px;
+  }
+  
+  .input {
+    padding: 10px;
+    margin: 10px 0;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  .addButton {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .addButton:hover {
+    background-color: #45a049;
+  }
+  
+  .productList {
+    margin-top: 20px;
+  }
+  
+  .productItem {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .productImage {
+    width: 100px;
+    height: 100px;
+    margin-right: 20px;
+  }
+  
+  .productDetails {
+    flex: 1;
+  }
+  
+  .deleteButton {
+    background-color: #ff4d4d;
+    color: white;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 5px;
+    border: none;
+  }
+  
+  .deleteButton:hover {
+    background-color: #ff0000;
+  }
+  
