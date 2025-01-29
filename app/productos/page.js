@@ -69,3 +69,30 @@ export default function CategoryPage() {
     </div>
   );
 }
+
+
+// app/products/page.js
+export const revalidate = 60; // Revalidar cada 60 segundos
+
+async function fetchProducts() {
+  const res = await fetch('/api/products', { cache: 'force-cache' }); // Cache local
+  return res.json();
+}
+
+export default async function ProductsPage() {
+  const products = await fetchProducts();
+
+  return (
+    <div>
+      <h1>Catálogo</h1>
+      <div>
+        {products.map(product => (
+          <div key={product.id}>
+            <h2>{product.name}</h2>
+            <p>${product.price}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

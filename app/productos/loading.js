@@ -30,3 +30,17 @@ export default function Loading() {
     </div>
   );
 }
+
+
+export default function Loading() {
+  return <p>Cargando catálogo...</p>;
+}
+
+
+export default function Loading() {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <h2>Cargando productos...</h2>
+    </div>
+  );
+}

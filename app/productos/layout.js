@@ -19,3 +19,13 @@ export default function CategoryLayout({ children }) {
     </div>
   );
 }
+
+
+
+export default function ProductsLayout({ children }) {
+  return (
+    <Suspense fallback={<div>Cargando el catálogo...</div>}>
+      {children}
+    </Suspense>
+  );
+}
