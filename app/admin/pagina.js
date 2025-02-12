@@ -1,50 +1,66 @@
- 
-import { useState } from 'react';
-import styles from '../../styles/Admin.module.scss';
+"use client";
+
+import { useState } from "react";
+import { uploadFile } from "@/lib/firebaseStorage";
+import { createProduct } from "@/lib/firebaseDatabase";
+import { addProduct } from "@/lib/firebaseCrud"; // Asegúrate de que este archivo esté configurado
+import styles from "../../styles/Admin.module.css";
 
 export default function AdminPage() {
   const [products, setProducts] = useState([
     {
       id: 1,
-      name: 'Nike Air Max 2021',
+      name: "Nike Air Max 2021",
       price: 120,
-      image: '/img/2da zapa de nike.jpg',
+      image: "/img/2da zapa de nike.jpg",
     },
     {
       id: 2,
-      name: 'Nike ZoomX Vaporfly Next%',
+      name: "Nike ZoomX Vaporfly Next%",
       price: 250,
-      image: '/img/zapatilla nike.jpeg',
+      image: "/img/zapatilla nike.jpeg",
     },
     {
       id: 3,
-      name: 'Nike React Infinity Run',
+      name: "Nike React Infinity Run",
       price: 160,
-      image: '/img/gorra nike.jpeg',
+      image: "/img/gorra nike.jpeg",
     },
   ]);
 
   const [newProduct, setNewProduct] = useState({
-    name: '',
-    price: '',
-    image: '',
+    name: "",
+    price: "",
+    image: "",
   });
 
-  const handleAddProduct = () => {
-    const updatedProducts = [
-      ...products,
-      {
-        ...newProduct,
-        id: products.length + 1,
-        price: parseFloat(newProduct.price),
-      },
-    ];
-    setProducts(updatedProducts);
-    setNewProduct({ name: '', price: '', image: '' });
+  const handleAddProduct = async () => {
+    const productToAdd = {
+      ...newProduct,
+      price: parseFloat(newProduct.price),
+    };
+
+    try {
+      // Agregar producto a Firestore
+      await addProduct(productToAdd);
+
+      // Actualizar el estado local
+      const updatedProducts = [
+        ...products,
+        { ...productToAdd, id: products.length + 1 },
+      ];
+      setProducts(updatedProducts);
+      setNewProduct({ name: "", price: "", image: "" });
+
+      alert("Producto agregado con éxito");
+    } catch (error) {
+      console.error("Error al agregar el producto:", error);
+      alert("Hubo un error al agregar el producto. Intenta de nuevo.");
+    }
   };
 
   const handleDeleteProduct = (id) => {
-    const updatedProducts = products.filter(product => product.id !== id);
+    const updatedProducts = products.filter((product) => product.id !== id);
     setProducts(updatedProducts);
   };
 
@@ -114,6 +130,42 @@ export default function AdminPage() {
           ))}
         </ul>
       </div>
+    </div>
+  );
+}
+
+
+export default function AdminPage() {
+  const [product, setProduct] = useState({ name: "", price: "", image: null });
+
+  const handleSubmit = async () => {
+    try {
+      if (product.image) {
+        const imageUrl = await uploadFile(product.image, "products");
+        await createProduct({ ...product, image: imageUrl });
+        alert("Producto creado");
+      }
+    } catch (error) {
+      console.error("Error al crear producto:", error);
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    setProduct((prev) => ({
+      ...prev,
+      [name]: files ? files[0] : value,
+    }));
+  };
+
+  return (
+    <div>
+      <h1>Admin</h1>
+      <input type="text" name="name" onChange={handleChange} placeholder="Nombre" />
+      <input type="number" name="price" onChange={handleChange} placeholder="Precio" />
+      <input type="file" name="image" onChange={handleChange} />
+      <button onClick={handleSubmit}>Crear Producto</button>
     </div>
   );
 }
+
